@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Boxes,
   AlertTriangle,
@@ -53,95 +53,97 @@ export default function GudangDashboardTab({
   }
 
   // Filter Data
-  const filteredList = stokDinas.filter((item) => {
-    const matchSearch =
-      item.nama_barang.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.kategori.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredList = useMemo(() => {
+    return stokDinas.filter((item) => {
+      const matchSearch =
+        item.nama_barang.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.kategori.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchStatus = filterStatus === 'ALL' || item.status_stok === filterStatus;
+      const matchStatus = filterStatus === 'ALL' || item.status_stok === filterStatus;
 
-    let matchExp = true;
-    if (filterExp === 'EXPIRED') {
-      matchExp = item.batches.some((b) => b.saldo_batch > 0 && b.is_expired);
-    } else if (filterExp === 'NEAR') {
-      matchExp = item.batches.some((b) => b.saldo_batch > 0 && !b.is_expired && b.days_to_expire <= 90);
-    }
+      let matchExp = true;
+      if (filterExp === 'EXPIRED') {
+        matchExp = item.batches.some((b) => b.saldo_batch > 0 && b.is_expired);
+      } else if (filterExp === 'NEAR') {
+        matchExp = item.batches.some((b) => b.saldo_batch > 0 && !b.is_expired && b.days_to_expire <= 90);
+      }
 
-    return matchSearch && matchStatus && matchExp;
-  });
+      return matchSearch && matchStatus && matchExp;
+    });
+  }, [stokDinas, searchTerm, filterStatus, filterExp]);
 
   return (
     <div className="space-y-6">
       {/* ── 1. KPI CARDS RINGKASAN STOK DINAS ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
         {/* Total Barang */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Item</span>
-            <Boxes className="w-5 h-5 text-blue-500" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider">Total Item</span>
+            <Boxes className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{totalMacam}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100">{totalMacam}</span>
             <span className="text-xs text-slate-400 ml-1">jenis</span>
           </div>
         </div>
 
         {/* Stok Aman */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
-            <span className="text-xs font-semibold uppercase tracking-wider">Stok Aman</span>
-            <CheckCircle2 className="w-5 h-5" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider">Stok Aman</span>
+            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{totalAman}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">{totalAman}</span>
             <span className="text-xs text-slate-400 ml-1">produk</span>
           </div>
         </div>
 
         {/* Buffer / Kritis */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-amber-600 dark:text-amber-400">
-            <span className="text-xs font-semibold uppercase tracking-wider">Kritis / Buffer</span>
-            <ShieldAlert className="w-5 h-5" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider">Kritis/Buffer</span>
+            <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-amber-600 dark:text-amber-400">{totalKritis}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400">{totalKritis}</span>
             <span className="text-xs text-slate-400 ml-1">produk</span>
           </div>
         </div>
 
         {/* Habis */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-rose-200/80 dark:border-rose-900/40 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-rose-200/80 dark:border-rose-900/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-rose-600 dark:text-rose-400">
-            <span className="text-xs font-semibold uppercase tracking-wider">Habis (0)</span>
-            <XCircle className="w-5 h-5" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider">Habis (0)</span>
+            <XCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-rose-600 dark:text-rose-400">{totalHabis}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <span className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">{totalHabis}</span>
             <span className="text-xs text-slate-400 ml-1">produk</span>
           </div>
         </div>
 
         {/* Mendekati Expired (<90 Hari) */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-orange-200/80 dark:border-orange-900/40 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-orange-200/80 dark:border-orange-900/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-orange-600 dark:text-orange-400">
-            <span className="text-xs font-semibold uppercase tracking-wider">&lt; 3 Bulan Exp</span>
-            <Clock className="w-5 h-5" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider">&lt; 3 Bln Exp</span>
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-orange-600 dark:text-orange-400">{countNearExpired}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <span className="text-xl sm:text-2xl font-black text-orange-600 dark:text-orange-400">{countNearExpired}</span>
             <span className="text-xs text-slate-400 ml-1">batch</span>
           </div>
         </div>
 
         {/* Expired / Kadaluarsa */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-red-200/80 dark:border-red-900/40 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-red-200/80 dark:border-red-900/40 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-red-600 dark:text-red-400">
-            <span className="text-xs font-semibold uppercase tracking-wider">Kadaluarsa</span>
-            <AlertTriangle className="w-5 h-5" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider">Kadaluarsa</span>
+            <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-red-600 dark:text-red-400">{countExpired}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <span className="text-xl sm:text-2xl font-black text-red-600 dark:text-red-400">{countExpired}</span>
             <span className="text-xs text-slate-400 ml-1">batch</span>
           </div>
         </div>
@@ -213,8 +215,8 @@ export default function GudangDashboardTab({
       </div>
 
       {/* ── 4. TABEL LEDGER STOK DINAS ── */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
@@ -222,28 +224,29 @@ export default function GudangDashboardTab({
             </h3>
           </div>
           <span className="text-xs text-slate-400 font-medium">
-            {filteredList.length} dari {totalMacam} jenis barang
+            Total {filteredList.length} dari {totalMacam} jenis barang
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-100 dark:border-slate-800">
-                <th className="p-3.5 text-center w-12">No</th>
-                <th className="p-3.5">Nama Obat / Barang</th>
-                <th className="p-3.5 text-center">Kategori</th>
-                <th className="p-3.5 text-center">Kemasan</th>
-                <th className="p-3.5 text-center">Min. Buffer</th>
-                <th className="p-3.5 text-center">Total Masuk</th>
-                <th className="p-3.5 text-center">Distribusi</th>
-                <th className="p-3.5 text-center">Saldo Dinas</th>
-                <th className="p-3.5 text-center">Status Stok</th>
-                <th className="p-3.5">Rincian Batch &amp; Kadaluarsa</th>
-                <th className="p-3.5 text-center w-28">Aksi</th>
+        {/* Frame Tabel Scrollable dengan Sticky Header */}
+        <div className="overflow-x-auto max-h-[580px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 scroll-smooth">
+          <table className="w-full text-left text-xs border-collapse relative">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/80 shadow-xs border-b border-slate-200 dark:border-slate-800">
+              <tr className="text-slate-700 dark:text-slate-300 font-extrabold uppercase tracking-wider text-[10px]">
+                <th className="p-3.5 text-center w-12 bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">No</th>
+                <th className="p-3.5 bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Nama Obat / Barang</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Kategori</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Kemasan</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Min. Buffer</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Total Masuk</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Distribusi</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Stok</th>
+                <th className="p-3.5 text-center bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Status Stok</th>
+                <th className="p-3.5 bg-slate-50 dark:bg-slate-800/80 border-r border-slate-200 dark:border-slate-800">Rincian Batch &amp; Kadaluarsa</th>
+                <th className="p-3.5 text-center w-28 bg-slate-50 dark:bg-slate-800/80">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 text-slate-700 dark:text-slate-200">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
               {filteredList.length === 0 ? (
                 <tr>
                   <td colSpan={11} className="p-8 text-center text-slate-400">
@@ -256,10 +259,10 @@ export default function GudangDashboardTab({
                   return (
                     <tr
                       key={item.id_barang}
-                      className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors"
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
                     >
-                      <td className="p-3.5 text-center font-mono text-slate-400">{idx + 1}</td>
-                      <td className="p-3.5">
+                      <td className="p-3.5 text-center font-mono text-slate-400 border-r border-slate-200 dark:border-slate-800">{idx + 1}</td>
+                      <td className="p-3.5 border-r border-slate-200 dark:border-slate-800">
                         <div className="font-bold text-slate-900 dark:text-slate-100">
                           {item.nama_barang}
                         </div>
@@ -267,24 +270,24 @@ export default function GudangDashboardTab({
                           ID: #{item.id_barang}
                         </div>
                       </td>
-                      <td className="p-3.5 text-center">
-                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                      <td className="p-3.5 text-center border-r border-slate-200 dark:border-slate-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                           {item.kategori}
                         </span>
                       </td>
-                      <td className="p-3.5 text-center font-medium">{item.satuan_kemasan}</td>
-                      <td className="p-3.5 text-center">
+                      <td className="p-3.5 text-center font-medium border-r border-slate-200 dark:border-slate-800">{item.satuan_kemasan}</td>
+                      <td className="p-3.5 text-center border-r border-slate-200 dark:border-slate-800">
                         <span className="font-bold text-slate-700 dark:text-slate-300">
                           {item.min_stok_dinas}
                         </span>
                       </td>
-                      <td className="p-3.5 text-center font-semibold text-emerald-600 dark:text-emerald-400">
+                      <td className="p-3.5 text-center font-semibold text-emerald-600 dark:text-emerald-400 border-r border-slate-200 dark:border-slate-800">
                         {item.total_masuk.toLocaleString('id-ID')}
                       </td>
-                      <td className="p-3.5 text-center font-semibold text-blue-600 dark:text-blue-400">
+                      <td className="p-3.5 text-center font-semibold text-blue-600 dark:text-blue-400 border-r border-slate-200 dark:border-slate-800">
                         {item.total_terdistribusi.toLocaleString('id-ID')}
                       </td>
-                      <td className="p-3.5 text-center font-bold text-sm">
+                      <td className="p-3.5 text-center font-bold text-sm border-r border-slate-200 dark:border-slate-800">
                         <span
                           className={
                             item.saldo_dinas === 0
@@ -297,24 +300,24 @@ export default function GudangDashboardTab({
                           {item.saldo_dinas.toLocaleString('id-ID')}
                         </span>
                       </td>
-                      <td className="p-3.5 text-center">
+                      <td className="p-3.5 text-center border-r border-slate-200 dark:border-slate-800">
                         {item.status_stok === 'AMAN' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                             <CheckCircle2 className="w-3 h-3" /> AMAN
                           </span>
                         )}
                         {item.status_stok === 'KRITIS' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                             <ShieldAlert className="w-3 h-3" /> BUFFER TERKUNCI
                           </span>
                         )}
                         {item.status_stok === 'HABIS' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
                             <XCircle className="w-3 h-3" /> HABIS (0)
                           </span>
                         )}
                       </td>
-                      <td className="p-3.5">
+                      <td className="p-3.5 border-r border-slate-100 dark:border-slate-800">
                         <div className="space-y-1 max-w-xs">
                           {item.batches.length === 0 ? (
                             <span className="text-[11px] text-slate-400 italic">Belum ada batch</span>
@@ -391,6 +394,14 @@ export default function GudangDashboardTab({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Footer Info Frame Scroll */}
+        <div className="px-6 py-3 bg-slate-50/90 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Menampilkan seluruh <strong>{filteredList.length}</strong></span>
+          </div>
         </div>
       </div>
     </div>
