@@ -80,7 +80,27 @@ export function LandingFooter() {
   const [isKontakOpen, setIsKontakOpen] = useState(false);
 
   return (
-    <footer className="border-t border-blue-100/80 dark:border-slate-800 bg-blue-50/70 dark:bg-slate-900 text-slate-600 dark:text-slate-300 transition-colors">
+    <footer className="relative bg-blue-50/70 dark:bg-slate-900 text-slate-600 dark:text-slate-300 transition-colors">
+      {/* ── ELEMENTOR-STYLE "WAVES" SHAPE DIVIDER (TOP FOOTER) ── */}
+      <div className="w-full overflow-hidden leading-none bg-slate-50 dark:bg-slate-950 -mb-1 pointer-events-none">
+        <svg
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          className="relative block w-full h-8 sm:h-12 md:h-16"
+        >
+          {/* Layer 1: Translucent wave */}
+          <path
+            d="M0,80 C280,20 460,110 720,60 C980,10 1200,90 1440,50 L1440,120 L0,120 Z"
+            className="fill-blue-200/40 dark:fill-slate-800/40"
+          />
+          {/* Layer 2: Main solid wave filling into footer background */}
+          <path
+            d="M0,60 C240,10 480,95 720,45 C960,0 1200,80 1440,40 L1440,120 L0,120 Z"
+            className="fill-blue-50/70 dark:fill-slate-900"
+          />
+        </svg>
+      </div>
+
       {/* ── BAGIAN UTAMA FOOTER (MULTI-KOLOM) ── */}
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-7 sm:pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-10">

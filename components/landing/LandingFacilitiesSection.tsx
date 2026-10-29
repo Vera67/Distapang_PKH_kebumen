@@ -93,10 +93,6 @@ export default function LandingFacilitiesSection({
           <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 sm:gap-3">
             <div className="flex items-center flex-wrap gap-2 sm:gap-3">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-xs font-bold text-sky-800 dark:text-sky-300 mb-1.5">
-                  <Stethoscope size={14} className="text-sky-600 dark:text-sky-400" />
-                  <span>Cakupan Pelayanan Kesehatan Hewan Terpadu</span>
-                </div>
                 <h2 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   Data {puskeswanList.length} Unit Puskeswan Aktif Kabupaten Kebumen
                 </h2>
